@@ -21,6 +21,10 @@ void Map::processed(int x, int y){
   chunkAt(x, y)->processed = true;
 }
 
+boolean Map::isProcessed(int x, int y){
+    return chunkAt(x, y)->processed;
+}
+
 Chunk* Map::getChunks(){
   return chunks;
 }

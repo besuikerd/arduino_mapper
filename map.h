@@ -19,6 +19,7 @@ class Map{
     Chunk* chunkAt(int x, int y);
     void obstacle(int x, int y);
     void processed(int x, int y);
+    boolean isProcessed(int x, int y);
     Chunk* getChunks();
     int getMapSize();
     String toString();
