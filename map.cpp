@@ -3,10 +3,13 @@
 Map::Map(int mapSize){
   this->mapSize = mapSize;
   chunks = new Chunk[mapSize * mapSize];
-  for(int i = 0 ; i < mapSize * mapSize ; i++){
-  chunks[i] = *(Chunk*) calloc(1, sizeof(Chunk));
+  for(int i = 0 ; i < mapSize ; i++){
+    for(int j = 0 ; j < mapSize ; j++){
+      Chunk* c = chunkAt(i, j);
+      c->processed = false;
+      c->obstacle = false;
+    }
   }
-//  memset(chunks, 0, (mapSize * mapSize) / 4);
 }
 
 Chunk* Map::chunkAt(int x, int y){
@@ -30,7 +33,6 @@ int Map::getMapSize(){
 }
 
 String Map::toString(){
-  Map m = *this;
   Chunk* chunks = getChunks();
   int length = mapSize * mapSize;
   int counter = 0;
@@ -47,31 +49,31 @@ String Map::toString(){
 }
 
 void writeToEEPROM(Map m){
-  EEPROM.write(0, m.getMapSize());
   Chunk* chunks = m.getChunks();
   int length = m.getMapSize() * m.getMapSize();
   byte curr = 0;
   for(int i = 0 ; i < length; i++){
     Chunk c = chunks[i];
-    curr |= (c.processed ? 1 : 0 | c.obstacle ? 2 : 0) >> (i % 4);
+    curr |= (c.processed ? 1 : 0 | c.obstacle ? 2 : 0) << ((i % 4) * 2);
+    Serial.println((c.processed ? 1 : 0 | c.obstacle ? 2 : 0), BIN);
     if((i + 1) % 4 == 0){
-      EEPROM.write(1 + i / 4, curr);
+      Serial.println(curr, BIN);
+      EEPROM.write((i + 1) / 4 - 1, curr);
       curr = 0;
     }
   }
 }
 
-Map readFromEEPROM(){
-  int length = EEPROM.read(0);
-  Map m = *new Map(length);
+void readFromEEPROM(Map* m){
+  int length = m->getMapSize() * m->getMapSize();
   byte curr = 0;
-  for(int i = 0 ; i < length * length ; i++){
-     Chunk c = *m.chunkAt(i * length, i);
-     c.processed = curr >> ((i % 4) * 2) & 1 == 1;
-     c.obstacle = curr >> ((i % 4) * 2 + 1) & 1 == 1;
-     if((i + 1) % 4 == 0){
-       curr = EEPROM.read((i + 1) / 4);
-     }
+  for(int i = 0 ; i < length ; i++){
+    if(i % 4 == 0){
+      curr = EEPROM.read(i / 4);
+    }
+    Chunk* c = m->chunkAt(i % m->getMapSize(), i / m->getMapSize());
+    c->processed = (curr >> ((i % 4) * 2) & 1) == 1;
+    c->obstacle = (curr >> ((i % 4) * 2 + 1) & 1) == 1;
   }
-  return m;
 }
+
