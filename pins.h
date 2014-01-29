@@ -6,3 +6,5 @@ int DIR_R = 4;
 
 int PWM_L = 6;
 int PWM_R = 5;
+
+int LED_FINISHED = 9;

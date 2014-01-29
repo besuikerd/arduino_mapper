@@ -8,7 +8,7 @@
 #include <IRremote.h>
 
 // If 1, test methods will run instead of normal methods
-#define TEST_MODE 1
+#define TEST_MODE 0
 
 // Map object for storing the map
 Map m(MAP_SIZE);
@@ -37,50 +37,42 @@ void setup(){
   } else{
     m.processed(currentX, currentY);
     readFromEEPROM(&m);
+	setupPins();
   }
-
-  while(true){
-    motor.turnLeft();
-    delay(1000);
-    motor.turnRight();
-    delay(1000);
-  }
-  
 }
 
-
+void setupPins(){
+	pinMode(LED_FINISHED, OUTPUT);
+	pinMode(BUMP_L, INPUT);
+	pinMode(BUMP_R, INPUT);
+}
 
 void loop(){
-  if(!TEST_MODE){
-    /*if (irrecv.decode(&results)) {
-        Serial.println(results.value, HEX);
-        
-        if(results.value != 0xFFFFFFFF){                
-            for(int i=0; i<(sizeof(inputs)/sizeof(int)); i++){
-                if(results.value == inputs[i]){
-                    Serial.println(meanings[i]);
-                }
-            }
-        }
-        
-        
-        
-        irrecv.resume(); // Receive the next value
-    }*/
-  
-    Serial.println("MAP");
-    Serial.println(m.toString());
-    
-    
-    
-      
-    pathfinder.run(currentX, currentY, currentHeading);
-    Serial.print("Target: ");
-    Serial.print(pathfinder.getTargetX()); 
-    Serial.print(",");
-    Serial.print(pathfinder.getTargetY());
-    
-    while(true);
-  }
+	if(!TEST_MODE){
+		
+		
+		pathfinder.run(currentX, currentY, currentHeading);
+		
+		
+		if(pathfinder.isTargetReachable()){
+			path p = pathfinder.getPath();
+			
+			boolean collision = false;
+			
+			while(!bumper.checkCollision()){
+			}
+		} else{
+			finish();
+		}
+	}
 }
 
+void finish(){
+	//freeze
+	while(true){
+		digitalWrite(LED_FINISHED, HIGH);
+		delay(1000);
+		digitalWrite(LED_FINISHED, LOW);
+		delay(1000);			
+	}
+}
