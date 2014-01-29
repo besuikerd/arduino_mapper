@@ -11,20 +11,22 @@ void Pathfinder::run(int currentX, int currentY, int currentHeading){
     int x,y,current,n,e,w,s;
     bool changed = true;
     
-    // Reset
+    // Reset target
     this->targetX = currentX;
     this->targetY = currentY;
+    // Reset all costs and headings
     for(x=0; x<this->m->getMapSize(); x++){
         for(y=0; y<this->m->getMapSize(); y++){
             targetCosts[x][y].cost = DEFAULT_COST;
             targetCosts[x][y].heading = NORTH;
         }
     }
+    
     // Current position
     targetCosts[currentX][currentY].cost = 0;
     targetCosts[currentX][currentY].heading = currentHeading;
     
-    // Calculate path lengts
+    // Calculate path lengths
     while(changed){
         changed = false;
         for(x=0; x<MAP_SIZE; x++){
@@ -58,6 +60,7 @@ void Pathfinder::run(int currentX, int currentY, int currentHeading){
                     }
                     
                     if(current!=targetCosts[x][y].cost){
+                        // Set changed to true to indicate that the loop should continue
                         changed=true;
                         if(PATHFINDER_DEBUG){
                             Serial.print("Found new cost to ");
@@ -86,6 +89,7 @@ void Pathfinder::run(int currentX, int currentY, int currentHeading){
                 Serial.print('\t');
             }
             if(targetCosts[x][y].cost<current && (x!=currentX || y!=currentY)){
+                // This one is shorter
                 current = targetCosts[x][y].cost;
                 this->targetX = x;
                 this->targetY = y;
@@ -119,9 +123,10 @@ int Pathfinder::getCostTo(int x, int y){
     if(x>=0 && x<MAP_SIZE && y>=0 && y<MAP_SIZE){
         return targetCosts[x][y].cost;
     }
-    return 2000;
+    return @*DEFAULT_COST;
 }
 
+/** Calculate the amount of turns of 90 degrees needed to go from one heading to the other */
 int Pathfinder::calculateTurningCost(int from, int to){
     int r = abs((to - from) % 4);
     return r==3 ? 1 : r;

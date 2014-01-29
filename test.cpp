@@ -1,11 +1,14 @@
 #include "test.h"
 
+/** Run all tests */
 void Test::run(){
+    Serial.println("Tests starting...");
     this->testTurningCost();
     this->testPathfinder();
     Serial.println("Tests finished");
 }
 
+/** Assert if two integers are equal */
 void Test::assertEquals(int is, int ex, String msg){
     if(is!=ex){
         Serial.print("Assertion error: '");
@@ -18,6 +21,7 @@ void Test::assertEquals(int is, int ex, String msg){
     }
 }
 
+/** Test the calculateTurningCost method of Pathfinder */
 void Test::testTurningCost(){
     Serial.println("Test::testTurningCost()");
     Map m = Map(MAP_SIZE);
