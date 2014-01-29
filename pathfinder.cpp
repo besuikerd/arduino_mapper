@@ -31,13 +31,15 @@ void Pathfinder::run(int currentX, int currentY, int currentHeading){
                     current = targetCosts[x][y].cost;
                     // Calculate distance by adding distance to neighbour to 1 and the number of turns needed to good
                     // from the neighbour to this point
-                    n = this->costTo(x, y-1)+1+this->turningCost(this->getTargetHeading(x, y-1), SOUTH);
-                    e = this->costTo(x+1, y)+1+this->turningCost(this->getTargetHeading(x+1, y), WEST);
-                    w = this->costTo(x-1, y)+1+this->turningCost(this->getTargetHeading(x-1, y), EAST);
-                    s = this->costTo(x, y+1)+1+this->turningCost(this->getTargetHeading(x, y-1), NORTH);
+                    n = this->getCostTo(x, y-1)+1+this->calculateTurningCost(this->getTargetHeading(x, y-1), SOUTH);
+                    e = this->getCostTo(x+1, y)+1+this->calculateTurningCost(this->getTargetHeading(x+1, y), WEST);
+                    w = this->getCostTo(x-1, y)+1+this->calculateTurningCost(this->getTargetHeading(x-1, y), EAST);
+                    s = this->getCostTo(x, y+1)+1+this->calculateTurningCost(this->getTargetHeading(x, y-1), NORTH);
                     
+                    // Determine shortest route
                     if(n<targetCosts[x][y].cost){
                         targetCosts[x][y].cost = n;
+                        // You're coming from the north, so the final heading is south
                         targetCosts[x][y].heading = SOUTH;
                     }
                     if(s<targetCosts[x][y].cost){
@@ -55,14 +57,16 @@ void Pathfinder::run(int currentX, int currentY, int currentHeading){
                     
                     if(current!=targetCosts[x][y].cost){
                         changed=true;
-                        Serial.print("Found new cost to ");
-                        Serial.print(x);
-                        Serial.print(",");
-                        Serial.print(y);
-                        Serial.print(" old=");
-                        Serial.print(current);
-                        Serial.print(" new=");
-                        Serial.println(targetCosts[x][y].cost);
+                        if(PATHFINDER_DEBUG){
+                            Serial.print("Found new cost to ");
+                            Serial.print(x);
+                            Serial.print(",");
+                            Serial.print(y);
+                            Serial.print(" old=");
+                            Serial.print(current);
+                            Serial.print(" new=");
+                            Serial.println(targetCosts[x][y].cost);
+                        }
                     } 
                 }
             }
@@ -73,17 +77,19 @@ void Pathfinder::run(int currentX, int currentY, int currentHeading){
     current = 1000;
     for(y=0; y<MAP_SIZE; y++){
         for(x=0; x<MAP_SIZE; x++){
-            Serial.print(targetCosts[x][y].cost);
-            Serial.print('|');
-            Serial.print(targetCosts[x][y].heading);
-            Serial.print('\t');
+            if(PATHFINDER_DEBUG){
+                Serial.print(targetCosts[x][y].cost);
+                Serial.print('|');
+                Serial.print(targetCosts[x][y].heading);
+                Serial.print('\t');
+            }
             if(targetCosts[x][y].cost<current && (x!=currentX || y!=currentY)){
                 current = targetCosts[x][y].cost;
                 this->targetX = x;
                 this->targetY = y;
             }
         }
-        Serial.println();
+        if(PATHFINDER_DEBUG) Serial.println();
     }
 }
 
@@ -103,14 +109,14 @@ int Pathfinder::getTargetHeading(int x, int y){
     return NORTH;
 }
 
-int Pathfinder::costTo(int x, int y){
+int Pathfinder::getCostTo(int x, int y){
     if(x>=0 && x<MAP_SIZE && y>=0 && y<MAP_SIZE){
         return targetCosts[x][y].cost;
     }
     return 2000;
 }
 
-int Pathfinder::turningCost(int from, int to){
+int Pathfinder::calculateTurningCost(int from, int to){
     int r = abs((to - from) % 4);
     return r==3 ? 1 : r;
 }

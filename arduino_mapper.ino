@@ -5,7 +5,8 @@
 #include <EEPROM.h>
 #include <IRremote.h>
 
-boolean b = false;
+// If 1, test methods will run instead of normal methods
+#define TEST_MODE 0
 
 // Map object for storing the map
 Map m(MAP_SIZE);
@@ -14,7 +15,7 @@ Motor motor;
 // Pathfinder
 Pathfinder pathfinder(&m);
 
-int p = 0;
+//int p = 0;
 
 // Position vars
 int currentX = 2;
@@ -83,9 +84,18 @@ char meanings[][16] = {
 void setup(){
   Serial.begin(9600);
   
-  
-  Test t = Test();
-  t.run();
+  if(TEST_MODE){
+    Test t = Test();
+    t.run();
+  }else{
+    m.processed(currentX, currentY);
+    m.obstacle(2,1); m.processed(2,1);
+    m.obstacle(1,1); m.processed(1,1);
+    m.obstacle(3,1); m.processed(3,1);
+    m.obstacle(1,2); m.processed(1,2);
+    m.obstacle(3,2); m.processed(3,2);
+    m.obstacle(3,3); m.processed(3,3);
+  }
 
   //map = *new Map(8);
   //motor = *new Motor();
@@ -97,18 +107,13 @@ void setup(){
 
   //read eeprom
   //readFromEEPROM(&m);
-  m.processed(currentX, currentY);
-  m.obstacle(2,1); m.processed(2,1);
-  m.obstacle(1,1); m.processed(1,1);
-  m.obstacle(3,1); m.processed(3,1);
-  m.obstacle(1,2); m.processed(1,2);
-  m.obstacle(3,2); m.processed(3,2);
-  m.obstacle(3,3); m.processed(3,3);
+  
 }
 
 
 
 void loop(){
+  if(!TEST_MODE){
     /*if (irrecv.decode(&results)) {
         Serial.println(results.value, HEX);
         
@@ -131,11 +136,11 @@ void loop(){
     
     
       
-    /*pathfinder.run(currentX, currentY, currentHeading);
+    pathfinder.run(currentX, currentY, currentHeading);
     Serial.print("Target: ");
     Serial.print(pathfinder.getTargetX()); 
     Serial.print(",");
-    Serial.print(pathfinder.getTargetY()); */
+    Serial.print(pathfinder.getTargetY());
   
   
   
@@ -148,6 +153,7 @@ void loop(){
   p++;
   if(p>255) p=-255;*/
   
-  delay(1000000);
+    delay(1000000);
+  }
 }
 
