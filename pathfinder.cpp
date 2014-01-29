@@ -140,6 +140,7 @@ path Pathfinder::getPath(){
     for(i=length-1; i>=0; i--){
         heading = this->getTargetHeading(x,y);
         if(PATHFINDER_DEBUG){
+            Serial.print("Next chunk in path (x,y,d): ")
             Serial.print(x);
             Serial.print(",");
             Serial.print(y);
