@@ -1,6 +1,9 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 
+#ifndef MAP_H
+#define MAP_H
+#define MAP_SIZE 5
 struct Chunk{
 	/**
 	* wheter or not this Chunk has been processed
@@ -31,3 +34,4 @@ class Map{
 
 void writeToEEPROM(Map m);
 void readFromEEPROM(Map* m);
+#endif

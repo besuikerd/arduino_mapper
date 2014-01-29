@@ -1,15 +1,8 @@
 #include "map.h";
 #include "motor.h"
+#include "pathfinder.h"
 #include <EEPROM.h>
 #include <IRremote.h>
-
-#define MAP_SIZE 5
-
-enum Heading { NORTH=0, WEST=1, SOUTH=2, EAST=3 };
-struct targetCost{
-    int cost;
-    int heading;
-};
 
 boolean b = false;
 
@@ -17,6 +10,8 @@ boolean b = false;
 Map m(MAP_SIZE);
 // Motor object for controlling motors
 Motor motor;
+// Pathfinder
+Pathfinder pathfinder(&m);
 
 int p = 0;
 
@@ -24,10 +19,6 @@ int p = 0;
 int currentX = 2;
 int currentY = 2;
 int currentHeading = NORTH;
-int targetX = 2;
-int targetY = 2;
-targetCost targetCosts[MAP_SIZE][MAP_SIZE];
-
 
 // Remote control settings
 int RECV_PIN = 10;
@@ -108,108 +99,7 @@ void setup(){
   m.obstacle(3,3); m.processed(3,3);
 }
 
-/** 
-* Find the closest unprocessed chunk
-* Each action has a cost of 1 (action = turn or move to next chunk)
-*/
-void findTarget(){
-    int x,y,current,n,e,w,s;
-    bool changed = true;
-    
-    // Reset
-    for(x=0; x<MAP_SIZE; x++){
-        for(y=0; y<MAP_SIZE; y++){
-            targetCosts[x][y].cost = 1000;
-            targetCosts[x][y].heading = NORTH;
-        }
-    }
-    // Current position
-    targetCosts[currentX][currentY].cost = 0;
-    targetCosts[currentX][currentY].heading = currentHeading;
-    
-    // Calculate path lengts
-    while(changed){
-        changed = false;
-        for(x=0; x<MAP_SIZE; x++){
-            for(y=0; y<MAP_SIZE; y++){
-                if(!m.isProcessed(x,y)){
-                    current = targetCosts[x][y].cost;
-                    // Calculate distance by adding distance to neighbour to 1 and the number of turns needed to good
-                    // from the neighbour to this point
-                    n = costTo(x, y-1)+1+turningCost(getTargetHeading(x, y-1), SOUTH);
-                    s = costTo(x, y+1)+1+turningCost(getTargetHeading(x, y-1), NORTH);
-                    e = costTo(x+1, y)+1+turningCost(getTargetHeading(x+1, y), WEST);
-                    w = costTo(x-1, y)+1+turningCost(getTargetHeading(x-1, y), EAST);
-                    
-                    if(n<targetCosts[x][y].cost){
-                        targetCosts[x][y].cost = n;
-                        targetCosts[x][y].heading = SOUTH;
-                    }
-                    if(s<targetCosts[x][y].cost){
-                        targetCosts[x][y].cost = s;
-                        targetCosts[x][y].heading = NORTH;
-                    }
-                    if(e<targetCosts[x][y].cost){
-                        targetCosts[x][y].cost = e;
-                        targetCosts[x][y].heading = WEST;
-                    }
-                    if(w<targetCosts[x][y].cost){
-                        targetCosts[x][y].cost = w;
-                        targetCosts[x][y].heading = EAST;
-                    }
-                    
-                    if(current!=targetCosts[x][y].cost){
-                        changed=true;
-                        Serial.print("Found new cost to ");
-                        Serial.print(x);
-                        Serial.print(",");
-                        Serial.print(y);
-                        Serial.print(" old=");
-                        Serial.print(current);
-                        Serial.print(" new=");
-                        Serial.println(targetCosts[x][y].cost);
-                    } 
-                }
-            }
-        }
-    }
-    
-    // Find shortest path
-    current = 1000;
-    for(y=0; y<MAP_SIZE; y++){
-        for(x=0; x<MAP_SIZE; x++){
-            Serial.print(targetCosts[x][y].cost);
-            Serial.print('|');
-            Serial.print(targetCosts[x][y].heading);
-            Serial.print('\t');
-            if(targetCosts[x][y].cost<current && (x!=currentX || y!=currentY)){
-                current = targetCosts[x][y].cost;
-                targetX = x;
-                targetY = y;
-            }
-        }
-        Serial.println();
-    }
-}
 
-int getTargetHeading(int x, int y){
-    if(x>=0 && x<MAP_SIZE && y>=0 && y<MAP_SIZE){
-        return targetCosts[x][y].heading;
-    }
-    return NORTH;
-}
-
-int costTo(int x, int y){
-    if(x>=0 && x<MAP_SIZE && y>=0 && y<MAP_SIZE){
-        return targetCosts[x][y].cost;
-    }
-    return 2000;
-}
-
-int turningCost(int from, int to){
-    int r = abs((to - from) % 4);
-    return r==3 ? 1 : r;
-}
 
 void loop(){
     /*if (irrecv.decode(&results)) {
@@ -252,11 +142,11 @@ void loop(){
     Serial.print("W->N 1 "); Serial.println(turningCost(WEST, NORTH)); */
     
       
-    findTarget();
+    pathfinder.run(currentX, currentY, currentHeading);
     Serial.print("Target: ");
-    Serial.print(targetX); 
+    Serial.print(pathfinder.getTargetX()); 
     Serial.print(",");
-    Serial.println(targetY);
+    Serial.print(pathfinder.getTargetY()); 
   
   
   
