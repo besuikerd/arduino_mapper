@@ -8,8 +8,13 @@ void Test::run(){
 
 void Test::assertEquals(int is, int ex, String msg){
     if(is!=ex){
-        Serial.print("Assertion error: ");
-        Serial.println(msg);
+        Serial.print("Assertion error: '");
+        Serial.print(msg);
+        Serial.print("' (expected=");
+        Serial.print(ex);
+        Serial.print(" actual=");
+        Serial.print(is);
+        Serial.println(")");
     }
 }
 
@@ -59,6 +64,7 @@ void Test::testPathfinder(){
     
     this->assertEquals(p.getTargetX(), 2, "targetX");
     this->assertEquals(p.getTargetY(), 3, "targetY");
+    this->assertEquals(p.isTargetReachable(), 1, "reachable");
     // cost = 2x turn + 1 move = 3
     this->assertEquals(p.getCostTo(2,3), 3, "cost");
     this->assertEquals(p.getTargetHeading(2,3), SOUTH, "heading");

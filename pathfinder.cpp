@@ -1,6 +1,8 @@
 #include "pathfinder.h"
 #include "map.h"
 
+#define DEFAULT_COST 1000
+
 Pathfinder::Pathfinder(Map* m){
     this->m = m;
 }
@@ -14,7 +16,7 @@ void Pathfinder::run(int currentX, int currentY, int currentHeading){
     this->targetY = currentY;
     for(x=0; x<this->m->getMapSize(); x++){
         for(y=0; y<this->m->getMapSize(); y++){
-            targetCosts[x][y].cost = 1000;
+            targetCosts[x][y].cost = DEFAULT_COST;
             targetCosts[x][y].heading = NORTH;
         }
     }
@@ -91,6 +93,10 @@ void Pathfinder::run(int currentX, int currentY, int currentHeading){
         }
         if(PATHFINDER_DEBUG) Serial.println();
     }
+}
+
+bool Pathfinder::isTargetReachable(){
+    return this->getCostTo(this->getTargetX(), this->getTargetY()) < DEFAULT_COST;
 }
 
 int Pathfinder::getTargetX(){

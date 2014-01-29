@@ -15,6 +15,7 @@ class Pathfinder{
   public:
     Pathfinder(Map* m);
     void run(int x, int y, int heading);
+    bool isTargetReachable();
     int getTargetX();
     int getTargetY();
     int calculateTurningCost(int from, int to);
