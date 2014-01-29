@@ -62,11 +62,11 @@ void writeToEEPROM(Map m){
   byte curr = 0;
   for(int i = 0 ; i < length; i++){
     Chunk c = chunks[i];
-    curr |= (c.processed ? 1 : 0 | c.obstacle ? 2 : 0) << ((i % 4) * 2);
-    Serial.println((c.processed ? 1 : 0 | c.obstacle ? 2 : 0), BIN);
-    if((i + 1) % 4 == 0){
-      Serial.println(curr, BIN);
-      EEPROM.write((i + 1) / 4 - 1, curr);
+    curr |= ((c.processed ? 1 : 0) | (c.obstacle ? 2 : 0)) << ((i % 4) * 2);
+    //Serial.println(((c.processed ? 1 : 0) | (c.obstacle ? 2 : 0)), BIN);
+    if(i%4 == 3 || i == length-1){
+      //Serial.println(curr, BIN);
+      EEPROM.write(i / 4, curr);
       curr = 0;
     }
   }

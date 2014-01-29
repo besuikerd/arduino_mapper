@@ -3,6 +3,7 @@
 /** Run all tests */
 void Test::run(){
     Serial.println("Tests starting...");
+    this->testMap();
     this->testTurningCost();
     this->testPathfinder();
     Serial.println("Tests finished");
@@ -11,7 +12,7 @@ void Test::run(){
 /** Assert if two integers are equal */
 void Test::assertEquals(int is, int ex, String msg){
     if(is!=ex){
-        Serial.print("Assertion error: '");
+        Serial.print("!!! Assertion error: '");
         Serial.print(msg);
         Serial.print("' (expected=");
         Serial.print(ex);
@@ -19,6 +20,60 @@ void Test::assertEquals(int is, int ex, String msg){
         Serial.print(is);
         Serial.println(")");
     }
+}
+
+/** Test the Map class, including saving/loading */
+void Test::testMap(){
+    Serial.println("Test::testMap()");
+    int i;
+    Map m0 = Map(MAP_SIZE);
+    Map m1 = Map(MAP_SIZE);
+    Map m2 = Map(MAP_SIZE);
+    
+    // Test basic functions
+    m0.processed(2,2);
+    this->assertEquals(m0.isProcessed(2,2), 1, "isProcessed");
+    this->assertEquals(m0.isObstacle(2,2),  0, "isObstacle");
+    m0.obstacle(2,2);
+    this->assertEquals(m0.isProcessed(2,2), 1, "isProcessed");
+    this->assertEquals(m0.isObstacle(2,2),  1, "isObstacle");
+    
+    // Test writing/reading
+    for(i=0; i<MAP_SIZE; i++){ m1.processed(0,i); }
+    for(i=0; i<MAP_SIZE; i++){ m1.processed(1,i); m1.obstacle(1,i); }
+    for(i=0; i<MAP_SIZE; i++){ m1.processed(3,i); m1.obstacle(3,i); }
+    for(i=0; i<MAP_SIZE; i++){ m1.processed(4,i); }
+    
+    writeToEEPROM(m1);
+    readFromEEPROM(&m2);
+    
+    Serial.println("Map 1 (written to EEPROM)");
+    Serial.println(m1.toString());
+    Serial.println("Map 2 (read from EEPROM)");
+    Serial.println(m2.toString());
+    
+    for(i=0; i<MAP_SIZE; i++){
+        this->assertEquals(m2.isProcessed(0,i), 1, "isProcessed 0");
+        this->assertEquals(m2.isObstacle(0,i),  0, "isObstacle 0");
+    }
+    for(i=0; i<MAP_SIZE; i++){
+        this->assertEquals(m2.isProcessed(1,i), 1, "isProcessed 1");
+        this->assertEquals(m2.isObstacle(1,i),  1, "isObstacle 1");
+    }
+    for(i=0; i<MAP_SIZE; i++){
+        this->assertEquals(m2.isProcessed(2,i), 0, "isProcessed 2");
+        this->assertEquals(m2.isObstacle(2,i),  0, "isObstacle 2");
+    }
+    for(i=0; i<MAP_SIZE; i++){
+        this->assertEquals(m2.isProcessed(3,i), 1, "isProcessed 3");
+        this->assertEquals(m2.isObstacle(3,i),  1, "isObstacle 3");
+    }
+    for(i=0; i<MAP_SIZE; i++){
+        this->assertEquals(m2.isProcessed(4,i), 1, "isProcessed 4");
+        this->assertEquals(m2.isObstacle(4,i),  0, "isObstacle 4");
+    }
+    
+    
 }
 
 /** Test the calculateTurningCost method of Pathfinder */
@@ -76,6 +131,7 @@ void Test::testPathfinder(){
     m.obstacle(3,2); m.processed(3,2);
     m.obstacle(3,1); m.processed(3,1);
     
+    Serial.println("Map (for pathfinding)");
     Serial.println(m.toString());
     
     p.run(2, 2, NORTH);
