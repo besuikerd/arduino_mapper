@@ -123,26 +123,33 @@ path Pathfinder::getPath(){
     // Determine length of path
     x = this->targetX;
     y = this->targetY;
-    while(x!=this->currentX && y!=this->currentY){
+    while(x!=this->currentX || y!=this->currentY){
         heading = this->getTargetHeading(x,y);
         if(heading==NORTH) y+=1;
         if(heading==SOUTH) y-=1;
-        if(heading==EAST)  x+=1;
-        if(heading==WEST)  x-=1;
+        if(heading==EAST)  x-=1;
+        if(heading==WEST)  x+=1;
         length+=1;
     }
     
     x = this->targetX;
     y = this->targetY;
     result.length = length;
-    result.directions = (int*) malloc(length * sizeof(int));
+    result.directions = new int[length];
     
     for(i=length-1; i>=0; i--){
         heading = this->getTargetHeading(x,y);
+        if(PATHFINDER_DEBUG){
+            Serial.print(x);
+            Serial.print(",");
+            Serial.print(y);
+            Serial.print(",");
+            Serial.println(heading);
+        }
         if(heading==NORTH) y+=1;
         if(heading==SOUTH) y-=1;
-        if(heading==EAST)  x+=1;
-        if(heading==WEST)  x-=1;
+        if(heading==EAST)  x-=1;
+        if(heading==WEST)  x+=1;
         result.directions[i] = heading;
     }
     
