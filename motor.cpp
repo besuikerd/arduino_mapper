@@ -17,11 +17,14 @@ void Motor::left(int power){
     power = abs(power);
     power = power>255 ? 255 : power;
     analogWrite(this->pwm_l, power);
-    digitalWrite(this->pwm_r, 0);
 }
 
 void Motor::left(){
-  this->left(180);
+  this->left(MAX_POWER);
+}
+
+void Motor::leftBack(){
+  this->left(-MAX_POWER);
 }
 
 void Motor::right(int power){
@@ -29,12 +32,15 @@ void Motor::right(int power){
     digitalWrite(this->dir_r, power<0 ? HIGH : LOW);
     power = abs(power);
     power = power>255 ? 255 : power;
-    analogWrite(this->pwm_l, 0);
     analogWrite(this->pwm_r, power);
 }
 
 void Motor::right(){
-  this->right(180);
+  this->right(MAX_POWER);
+}
+
+void Motor::rightBack(){
+  this->right(-MAX_POWER);
 }
 
 void Motor::both(int power){
@@ -48,14 +54,28 @@ void Motor::both(int power){
 }
 
 void Motor::forward(){
-  this->both(180);
+  this->both(MAX_POWER);
 }
 
 void Motor::back(){
-  this->both(-180);
+  this->both(-MAX_POWER);
 }
 
 void Motor::stop(){
     analogWrite(this->pwm_l, 0);
     analogWrite(this->pwm_r, 0);
+}
+
+void Motor::turnLeft(){
+  this->leftBack();
+  this->right();
+  delay(ROTATE_DELAY);
+  this->stop();
+}
+
+void Motor::turnRight(){
+  this->rightBack();
+  this->left();
+  delay(ROTATE_DELAY);
+  this->stop();
 }
