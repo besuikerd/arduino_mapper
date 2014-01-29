@@ -1,50 +1,61 @@
 #include "motor.h"
 
-/*
-Function    pins per Ch. A  pins per Ch. B
-Direction       D12             D13
-PWM	            D3              D11
-Brake           D9              D8
-Current Sensing A0              A1
-*/
-
-int DIRECTION_LEFT = 12;
-int DIRECTION_RIGHT = 13;
-
-int PWM_LEFT = 3;
-int PWM_RIGHT = 11;
-
-Motor::Motor(){
-    pinMode(DIRECTION_LEFT, OUTPUT);
-    pinMode(DIRECTION_RIGHT, OUTPUT);
-    pinMode(PWM_LEFT, OUTPUT);
-    pinMode(PWM_RIGHT, OUTPUT);
+Motor::Motor(int dir_l, int dir_r, int pwm_l, int pwm_r){
+    this->dir_l = dir_l;
+    this->dir_r = dir_r;
+    this->pwm_l = pwm_l;
+    this->pwm_r = pwm_r;
+  
+    pinMode(this->dir_l, OUTPUT);
+    pinMode(this->dir_r, OUTPUT);
+    pinMode(this->pwm_l, OUTPUT);
+    pinMode(this->pwm_r, OUTPUT);
 }
 
 void Motor::left(int power){
-    digitalWrite(DIRECTION_LEFT, power<0 ? HIGH : LOW);
+    digitalWrite(this->dir_l, power<0 ? HIGH : LOW);
     power = abs(power);
     power = power>255 ? 255 : power;
-    analogWrite(PWM_LEFT, power);
+    analogWrite(this->pwm_l, power);
+    digitalWrite(this->pwm_r, 0);
+}
+
+void Motor::left(){
+  this->left(180);
 }
 
 void Motor::right(int power){
-    digitalWrite(DIRECTION_RIGHT, power<0 ? HIGH : LOW);
+
+    digitalWrite(this->dir_r, power<0 ? HIGH : LOW);
     power = abs(power);
     power = power>255 ? 255 : power;
-    analogWrite(PWM_RIGHT, power);
+    analogWrite(this->pwm_l, 0);
+    analogWrite(this->pwm_r, power);
+}
+
+void Motor::right(){
+  this->right(180);
 }
 
 void Motor::both(int power){
-    digitalWrite(DIRECTION_LEFT, power<0 ? HIGH : LOW);
-    digitalWrite(DIRECTION_RIGHT, power<0 ? HIGH : LOW);
+    digitalWrite(this->dir_l, power<0 ? HIGH : LOW);
+    digitalWrite(this->dir_r, power<0 ? HIGH : LOW);
     power = abs(power);
     power = power>255 ? 255 : power;
-    analogWrite(PWM_LEFT, power);
-    analogWrite(PWM_RIGHT, power);
+    Serial.println(power);
+    analogWrite(this->pwm_l, power);
+    analogWrite(this->pwm_r, power);
+}
+
+void Motor::forward(){
+  this->both(180);
+}
+
+void Motor::back(){
+  this->both(-180);
 }
 
 void Motor::stop(){
-    analogWrite(PWM_LEFT, 0);
-    analogWrite(PWM_RIGHT, 0);
+    analogWrite(this->pwm_l, 0);
+    analogWrite(this->pwm_r, 0);
 }

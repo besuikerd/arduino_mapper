@@ -2,6 +2,8 @@
 #include "motor.h"
 #include "pathfinder.h"
 #include "test.h"
+#include "Bumper.h"
+#include "pins.h"
 #include <EEPROM.h>
 #include <IRremote.h>
 
@@ -11,11 +13,13 @@
 // Map object for storing the map
 Map m(MAP_SIZE);
 // Motor object for controlling motors
-Motor motor;
+Motor motor = Motor(DIR_L, DIR_R, PWM_L, PWM_R);
 // Pathfinder
 Pathfinder pathfinder(&m);
 
-//int p = 0;
+// Bumper object to check collisions
+int bumperPins[2] = {BUMP_L, BUMP_R};
+Bumper bumper = Bumper(bumperPins);
 
 // Position vars
 int currentX = 2;
@@ -141,10 +145,7 @@ void loop(){
     Serial.print(pathfinder.getTargetX()); 
     Serial.print(",");
     Serial.print(pathfinder.getTargetY());
-  
-  
-  
-  //free(&m);
+
   
   
   

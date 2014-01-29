@@ -123,7 +123,7 @@ int Pathfinder::getCostTo(int x, int y){
     if(x>=0 && x<MAP_SIZE && y>=0 && y<MAP_SIZE){
         return targetCosts[x][y].cost;
     }
-    return @*DEFAULT_COST;
+    return 2 * DEFAULT_COST;
 }
 
 /** Calculate the amount of turns of 90 degrees needed to go from one heading to the other */
