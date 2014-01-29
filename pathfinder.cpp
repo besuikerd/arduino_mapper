@@ -33,7 +33,7 @@ void Pathfinder::run(int currentX, int currentY, int currentHeading){
         changed = false;
         for(x=0; x<MAP_SIZE; x++){
             for(y=0; y<MAP_SIZE; y++){
-                if(!m->isProcessed(x,y)){
+                if(!m->isObstacle(x,y)){
                     current = targetCosts[x][y].cost;
                     // Calculate distance by adding distance to neighbour to 1 and the number of turns needed to good
                     // from the neighbour to this point
@@ -92,9 +92,11 @@ void Pathfinder::run(int currentX, int currentY, int currentHeading){
             }
             if(targetCosts[x][y].cost<current && (x!=currentX || y!=currentY)){
                 // This one is shorter
-                current = targetCosts[x][y].cost;
-                this->targetX = x;
-                this->targetY = y;
+                if(!m->isProcessed(x,y)){
+                    current = targetCosts[x][y].cost;
+                    this->targetX = x;
+                    this->targetY = y;
+                }
             }
         }
         if(PATHFINDER_DEBUG) Serial.println();
@@ -113,16 +115,35 @@ int Pathfinder::getTargetY(){
     return this->targetY;
 }
 
-int* Pathfinder::getPath(){
-    int length = (abs(this->currentX-this->targetX) + abs(this->currentY-this->targetY));
-    int i,x,y;
-    int result[length];
+path Pathfinder::getPath(){
+    path result;
+    int length = 0;
+    int i,x,y,heading;
+    
+    // Determine length of path
+    x = this->targetX;
+    y = this->targetY;
+    while(x!=this->currentX && y!=this->currentY){
+        heading = this->getTargetHeading(x,y);
+        if(heading==NORTH) y+=1;
+        if(heading==SOUTH) y-=1;
+        if(heading==EAST)  x+=1;
+        if(heading==WEST)  x-=1;
+        length+=1;
+    }
     
     x = this->targetX;
     y = this->targetY;
+    result.length = length;
+    result.directions = (int*) malloc(length * sizeof(int));
     
-    for(i=0; i<length; i++){
-        
+    for(i=length-1; i>=0; i--){
+        heading = this->getTargetHeading(x,y);
+        if(heading==NORTH) y+=1;
+        if(heading==SOUTH) y-=1;
+        if(heading==EAST)  x+=1;
+        if(heading==WEST)  x-=1;
+        result.directions[i] = heading;
     }
     
     return result;

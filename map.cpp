@@ -28,6 +28,10 @@ boolean Map::isProcessed(int x, int y){
     return chunkAt(x, y)->processed;
 }
 
+boolean Map::isObstacle(int x, int y){
+    return chunkAt(x, y)->obstacle;
+}
+
 Chunk* Map::getChunks(){
   return chunks;
 }

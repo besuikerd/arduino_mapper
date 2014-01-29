@@ -8,7 +8,7 @@
 #include <IRremote.h>
 
 // If 1, test methods will run instead of normal methods
-#define TEST_MODE 0
+#define TEST_MODE 1
 
 // Map object for storing the map
 Map m(MAP_SIZE);

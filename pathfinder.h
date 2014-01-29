@@ -11,6 +11,11 @@ struct targetCost{
     int heading;
 };
 
+struct path{
+    int length;
+    int* directions;
+};
+
 class Pathfinder{
   public:
     Pathfinder(Map* m);
@@ -18,7 +23,7 @@ class Pathfinder{
     bool isTargetReachable();
     int getTargetX();
     int getTargetY();
-    int* getPath();
+    path getPath();
     int calculateTurningCost(int from, int to);
     int getCostTo(int x, int y);
     int getTargetHeading(int x, int y);

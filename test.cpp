@@ -56,21 +56,44 @@ void Test::testPathfinder(){
     // Set position as processed
     m.processed(2, 2);
     
+    // -xooo
+    // -xoxo
+    // -xSxE
+    // --x--
+    // -----
+    m.processed(2, 1);
+    m.processed(2, 0);
+    m.processed(3, 0);
+    m.processed(4, 0);
+    m.processed(4, 1);
+    
+    
     // Create a wall around the center
-    m.obstacle(2,1); m.processed(2,1);
+    m.obstacle(1,0); m.processed(1,0);
     m.obstacle(1,1); m.processed(1,1);
-    m.obstacle(3,1); m.processed(3,1);
     m.obstacle(1,2); m.processed(1,2);
+    m.obstacle(2,3); m.processed(2,3);
     m.obstacle(3,2); m.processed(3,2);
-    m.obstacle(3,3); m.processed(3,3);
+    m.obstacle(3,1); m.processed(3,1);
+    
+    Serial.println(m.toString());
     
     p.run(2, 2, NORTH);
     
-    this->assertEquals(p.getTargetX(), 2, "targetX");
-    this->assertEquals(p.getTargetY(), 3, "targetY");
+    this->assertEquals(p.getTargetX(), 4, "targetX");
+    this->assertEquals(p.getTargetY(), 2, "targetY");
     this->assertEquals(p.isTargetReachable(), 1, "reachable");
-    // cost = 2x turn + 1 move = 3
-    this->assertEquals(p.getCostTo(2,3), 3, "cost");
-    this->assertEquals(p.getTargetHeading(2,3), SOUTH, "heading");
+    // cost = 2x turn + 6 move = 8
+    this->assertEquals(p.getCostTo(4,2), 8, "cost");
+    this->assertEquals(p.getTargetHeading(4,2), SOUTH, "heading");
+    
+    path pa = p.getPath();
+    this->assertEquals(pa.length, 6, "length");
+    this->assertEquals(pa.directions[0], NORTH, "directions[0]");
+    this->assertEquals(pa.directions[1], NORTH, "directions[1]");
+    this->assertEquals(pa.directions[2], EAST, "directions[2]");
+    this->assertEquals(pa.directions[3], EAST, "directions[3]");
+    this->assertEquals(pa.directions[4], SOUTH, "directions[4]");
+    this->assertEquals(pa.directions[5], SOUTH, "directions[5]");
 
 }
