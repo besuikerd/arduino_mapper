@@ -48,9 +48,8 @@ void Motor::both(int power){
     digitalWrite(this->dir_r, power<0 ? HIGH : LOW);
     power = abs(power);
     power = power>255 ? 255 : power;
-    Serial.println(power);
-    analogWrite(this->pwm_l, power);
-    analogWrite(this->pwm_r, power);
+    analogWrite(this->pwm_l, power - DEVIATION);
+    analogWrite(this->pwm_r, power + DEVIATION);
 }
 
 void Motor::forward(){

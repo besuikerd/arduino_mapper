@@ -3,7 +3,7 @@
 
 #ifndef MAP_H
 #define MAP_H
-#define MAP_SIZE 5
+#define MAP_SIZE 4
 struct Chunk{
 	/**
 	* wheter or not this Chunk has been processed
