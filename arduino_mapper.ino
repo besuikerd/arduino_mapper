@@ -98,8 +98,14 @@ void setup(){
   //irrecv.enableIRIn(); // Start the receiver
 
   //read eeprom
-  readFromEEPROM(&m);
+  //readFromEEPROM(&m);
   m.processed(currentX, currentY);
+  m.obstacle(2,1); m.processed(2,1);
+  m.obstacle(1,1); m.processed(1,1);
+  m.obstacle(3,1); m.processed(3,1);
+  m.obstacle(1,2); m.processed(1,2);
+  m.obstacle(3,2); m.processed(3,2);
+  m.obstacle(3,3); m.processed(3,3);
 }
 
 /** 
@@ -107,7 +113,7 @@ void setup(){
 * Each action has a cost of 1 (action = turn or move to next chunk)
 */
 void findTarget(){
-    int x,y,current;
+    int x,y,current,n,e,w,s;
     bool changed = true;
     
     // Reset
@@ -128,11 +134,29 @@ void findTarget(){
             for(y=0; y<MAP_SIZE; y++){
                 if(!m.isProcessed(x,y)){
                     current = targetCosts[x][y].cost;
+                    // Calculate distance by adding distance to neighbour to 1 and the number of turns needed to good
+                    // from the neighbour to this point
+                    n = costTo(x, y-1)+1+turningCost(getTargetHeading(x, y-1), SOUTH);
+                    s = costTo(x, y+1)+1+turningCost(getTargetHeading(x, y-1), NORTH);
+                    e = costTo(x+1, y)+1+turningCost(getTargetHeading(x+1, y), WEST);
+                    w = costTo(x-1, y)+1+turningCost(getTargetHeading(x-1, y), EAST);
                     
-                    targetCosts[x][y].cost = min(targetCosts[x][y].cost, costTo(x-1, y)+1+turningCost(getTargetHeading(x-1, y), WEST));
-                    targetCosts[x][y].cost = min(targetCosts[x][y].cost, costTo(x+1, y)+1+turningCost(getTargetHeading(x+1, y), EAST));
-                    targetCosts[x][y].cost = min(targetCosts[x][y].cost, costTo(x, y-1)+1+turningCost(getTargetHeading(x, y-1), NORTH));
-                    targetCosts[x][y].cost = min(targetCosts[x][y].cost, costTo(x, y+1)+1+turningCost(getTargetHeading(x, y+1), SOUTH));
+                    if(n<targetCosts[x][y].cost){
+                        targetCosts[x][y].cost = n;
+                        targetCosts[x][y].heading = SOUTH;
+                    }
+                    if(s<targetCosts[x][y].cost){
+                        targetCosts[x][y].cost = s;
+                        targetCosts[x][y].heading = NORTH;
+                    }
+                    if(e<targetCosts[x][y].cost){
+                        targetCosts[x][y].cost = e;
+                        targetCosts[x][y].heading = WEST;
+                    }
+                    if(w<targetCosts[x][y].cost){
+                        targetCosts[x][y].cost = w;
+                        targetCosts[x][y].heading = EAST;
+                    }
                     
                     if(current!=targetCosts[x][y].cost){
                         changed=true;
@@ -144,7 +168,6 @@ void findTarget(){
                         Serial.print(current);
                         Serial.print(" new=");
                         Serial.println(targetCosts[x][y].cost);
-                        
                     } 
                 }
             }
@@ -153,14 +176,19 @@ void findTarget(){
     
     // Find shortest path
     current = 1000;
-    for(x=0; x<MAP_SIZE; x++){
-        for(y=0; y<MAP_SIZE; y++){
-            if(targetCosts[x][y].cost<current && x!=currentX && y!=currentY){
+    for(y=0; y<MAP_SIZE; y++){
+        for(x=0; x<MAP_SIZE; x++){
+            Serial.print(targetCosts[x][y].cost);
+            Serial.print('|');
+            Serial.print(targetCosts[x][y].heading);
+            Serial.print('\t');
+            if(targetCosts[x][y].cost<current && (x!=currentX || y!=currentY)){
                 current = targetCosts[x][y].cost;
                 targetX = x;
                 targetY = y;
             }
         }
+        Serial.println();
     }
 }
 
@@ -203,7 +231,7 @@ void loop(){
     Serial.println("MAP");
     Serial.println(m.toString());
     
-    Serial.print("N->E 1 "); Serial.println(turningCost(NORTH, EAST)); 
+    /*Serial.print("N->E 1 "); Serial.println(turningCost(NORTH, EAST)); 
     Serial.print("N->W 1 "); Serial.println(turningCost(NORTH, WEST)); 
     Serial.print("N->S 2 "); Serial.println(turningCost(NORTH, SOUTH)); 
     Serial.print("N->N 0 "); Serial.println(turningCost(NORTH, NORTH)); 
@@ -221,7 +249,7 @@ void loop(){
     Serial.print("W->E 2 "); Serial.println(turningCost(WEST, EAST)); 
     Serial.print("W->W 0 "); Serial.println(turningCost(WEST, WEST)); 
     Serial.print("W->S 1 "); Serial.println(turningCost(WEST, SOUTH)); 
-    Serial.print("W->N 1 "); Serial.println(turningCost(WEST, NORTH)); 
+    Serial.print("W->N 1 "); Serial.println(turningCost(WEST, NORTH)); */
     
       
     findTarget();
