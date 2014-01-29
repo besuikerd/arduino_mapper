@@ -1,5 +1,7 @@
 #include "map.h";
 #include "motor.h"
+#include "Bumper.h"
+#include "pins.h"
 #include <EEPROM.h>
 #include <IRremote.h>
 
@@ -17,6 +19,11 @@ boolean b = false;
 Map m(MAP_SIZE);
 // Motor object for controlling motors
 Motor motor;
+
+// Bumper object to check collisions
+int bumperPins[2] = {BUMP_L, BUMP_R};
+Bumper bumper = Bumper(bumperPins);
+
 
 int p = 0;
 
