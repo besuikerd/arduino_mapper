@@ -12,6 +12,8 @@ void Pathfinder::run(int currentX, int currentY, int currentHeading){
     bool changed = true;
     
     // Reset target
+    this->currentX = currentX;
+    this->currentY = currentY;
     this->targetX = currentX;
     this->targetY = currentY;
     // Reset all costs and headings
@@ -111,6 +113,20 @@ int Pathfinder::getTargetY(){
     return this->targetY;
 }
 
+int[] Pathfinder::getPath(){
+    int length = (abs(this->currentX-this->targetX) + abs(this->currentY-this->targetY))
+    int i,x,y;
+    int result[length];
+    
+    x = this->targetX;
+    y = this->targetY;
+    
+    for(i=0; i<length; i++){
+        
+    }
+    
+    return result;
+}
 
 int Pathfinder::getTargetHeading(int x, int y){
     if(x>=0 && x<MAP_SIZE && y>=0 && y<MAP_SIZE){
@@ -123,7 +139,7 @@ int Pathfinder::getCostTo(int x, int y){
     if(x>=0 && x<MAP_SIZE && y>=0 && y<MAP_SIZE){
         return targetCosts[x][y].cost;
     }
-    return @*DEFAULT_COST;
+    return 2*DEFAULT_COST;
 }
 
 /** Calculate the amount of turns of 90 degrees needed to go from one heading to the other */
