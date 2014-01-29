@@ -30,4 +30,4 @@ class Map{
 };
 
 void writeToEEPROM(Map m);
-Map readFromEEPROM();
+void readFromEEPROM(Map* m);
