@@ -26,64 +26,7 @@ int currentX = 2;
 int currentY = 2;
 int currentHeading = NORTH;
 
-// Remote control settings
-int RECV_PIN = 10;
-IRrecv irrecv(RECV_PIN);
-decode_results results;
 
-unsigned long left_forward = 0xFF10EF;
-unsigned long right_forward = 0xFF10EF;
-unsigned long both_forward = 0xFF10EF;
-
-unsigned long inputs[] = {
-  0xFFA25D,
-  0xFF629D,
-  0xFFE21D,
-  0xFF22DD,
-  0xFF02FD,
-  0xFFC23D,
-  0xFFE01F,
-  0xFFA857,
-  0xFF906F,
-  0xFF9867,
-  0xFFB04F,
-
-  0xFF6897, //0
-  0xFF30CF, //1
-  0xFF18E7, //2
-  0xFF7A85, //3
-  0xFF10EF, //4
-  0xFF38C7, //5
-  0xFF5AA5, //6
-  0xFF42BD, //7
-  0xFF4AB5, //8
-  0xFF52AD, //9
-};
-
-char meanings[][16] = {
-  "Power on/off",
-  "Mode",
-  "Mute/unmute",
-  "Play/pauze",
-  "Previous",
-  "Next",
-  "EQ",
-  "-",
-  "+",
-  "Shuffle",
-  "U/SD",
-
-  "0",
-  "1",
-  "2",
-  "3",
-  "4",
-  "5",
-  "6",
-  "7",
-  "8",
-  "9",
-};
 
 void setup(){
   Serial.begin(9600);
@@ -91,26 +34,17 @@ void setup(){
   if(TEST_MODE){
     Test t = Test();
     t.run();
-  }else{
+  } else{
     m.processed(currentX, currentY);
-    m.obstacle(2,1); m.processed(2,1);
-    m.obstacle(1,1); m.processed(1,1);
-    m.obstacle(3,1); m.processed(3,1);
-    m.obstacle(1,2); m.processed(1,2);
-    m.obstacle(3,2); m.processed(3,2);
-    m.obstacle(3,3); m.processed(3,3);
+    readFromEEPROM(&m);
   }
 
-  //map = *new Map(8);
-  //motor = *new Motor();
-
-  
-
-  // Set up IR
-  //irrecv.enableIRIn(); // Start the receiver
-
-  //read eeprom
-  //readFromEEPROM(&m);
+  while(true){
+    motor.turnLeft();
+    delay(1000);
+    motor.turnRight();
+    delay(1000);
+  }
   
 }
 
@@ -145,16 +79,8 @@ void loop(){
     Serial.print(pathfinder.getTargetX()); 
     Serial.print(",");
     Serial.print(pathfinder.getTargetY());
-
-  
-  
-  
-  /*motor.both(p);
-  Serial.println(p);
-  p++;
-  if(p>255) p=-255;*/
-  
-    delay(1000000);
+    
+    while(true);
   }
 }
 
