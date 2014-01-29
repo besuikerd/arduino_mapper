@@ -18,7 +18,7 @@ class Pathfinder{
     bool isTargetReachable();
     int getTargetX();
     int getTargetY();
-    int[] getPath();
+    int* getPath();
     int calculateTurningCost(int from, int to);
     int getCostTo(int x, int y);
     int getTargetHeading(int x, int y);
