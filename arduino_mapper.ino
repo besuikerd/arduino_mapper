@@ -1,6 +1,7 @@
 #include "map.h";
 #include "motor.h"
 #include "pathfinder.h"
+#include "test.h"
 #include <EEPROM.h>
 #include <IRremote.h>
 
@@ -80,10 +81,16 @@ char meanings[][16] = {
 };
 
 void setup(){
+  Serial.begin(9600);
+  
+  
+  Test t = Test();
+  t.run();
+
   //map = *new Map(8);
   //motor = *new Motor();
 
-  Serial.begin(9600);
+  
 
   // Set up IR
   //irrecv.enableIRIn(); // Start the receiver
@@ -121,32 +128,14 @@ void loop(){
     Serial.println("MAP");
     Serial.println(m.toString());
     
-    /*Serial.print("N->E 1 "); Serial.println(turningCost(NORTH, EAST)); 
-    Serial.print("N->W 1 "); Serial.println(turningCost(NORTH, WEST)); 
-    Serial.print("N->S 2 "); Serial.println(turningCost(NORTH, SOUTH)); 
-    Serial.print("N->N 0 "); Serial.println(turningCost(NORTH, NORTH)); 
     
-    Serial.print("E->E 0 "); Serial.println(turningCost(EAST, EAST)); 
-    Serial.print("E->W 2 "); Serial.println(turningCost(EAST, WEST)); 
-    Serial.print("E->S 1 "); Serial.println(turningCost(EAST, SOUTH)); 
-    Serial.print("E->N 1 "); Serial.println(turningCost(EAST, NORTH)); 
-    
-    Serial.print("S->E 1 "); Serial.println(turningCost(SOUTH, EAST)); 
-    Serial.print("S->W 1 "); Serial.println(turningCost(SOUTH, WEST)); 
-    Serial.print("S->S 0 "); Serial.println(turningCost(SOUTH, SOUTH)); 
-    Serial.print("S->N 2 "); Serial.println(turningCost(SOUTH, NORTH)); 
-    
-    Serial.print("W->E 2 "); Serial.println(turningCost(WEST, EAST)); 
-    Serial.print("W->W 0 "); Serial.println(turningCost(WEST, WEST)); 
-    Serial.print("W->S 1 "); Serial.println(turningCost(WEST, SOUTH)); 
-    Serial.print("W->N 1 "); Serial.println(turningCost(WEST, NORTH)); */
     
       
-    pathfinder.run(currentX, currentY, currentHeading);
+    /*pathfinder.run(currentX, currentY, currentHeading);
     Serial.print("Target: ");
     Serial.print(pathfinder.getTargetX()); 
     Serial.print(",");
-    Serial.print(pathfinder.getTargetY()); 
+    Serial.print(pathfinder.getTargetY()); */
   
   
   
