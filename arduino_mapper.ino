@@ -45,9 +45,14 @@ void setupPins(){
 	pinMode(LED_FINISHED, OUTPUT);
 	pinMode(BUMP_L, INPUT);
 	pinMode(BUMP_R, INPUT);
+	pinMode(DIR_L, OUTPUT);
+	pinMode(DIR_R, OUTPUT);
+	pinMode(PWM_L, OUTPUT);
+	pinMode(PWM_R, OUTPUT);
 }
 
 void loop(){
+
 	if(!TEST_MODE){
 		
 		
@@ -80,15 +85,14 @@ void loop(){
 					}
 				}
 				
-				int count = 30; //amount of increments to check for collisions
-				int d = 20; //delay per check
+				int count = MOTION_COUNT; //amount of increments to check for collisions
 				int total = 0; //total processed increments
 				
 				motor.forward();
 				
 				while(!(collision = bumper.checkCollision()) && count > 0){
 					
-					delay(d);
+					delay(MOTION_DELAY);
 					count--;
 					total++;
 				}
@@ -99,7 +103,7 @@ void loop(){
 					theMap.obstacle(currentX, currentY);
 					theMap.processed(currentX, currentY);
 					motor.back();
-					delay(total * d); //return to previous position
+					delay(total * MOTION_DELAY); //return to previous position
 					motor.stop();
 					return; //do loop again
 				}
@@ -135,9 +139,9 @@ void loop(){
 	}
 }
 
-void move(boolean forward){
-	
-
+void sleep(int m){
+	unsigned long time = millis();
+	while(millis() - time < m);
 }
 
 void finish(){

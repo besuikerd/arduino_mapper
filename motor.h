@@ -1,10 +1,13 @@
 #include <Arduino.h>
 
-#define MAX_POWER 180
+#define MAX_POWER 250
 
-#define ROTATE_DELAY 500
+#define ROTATE_DELAY 1410
 
-#define DEVIATION 5
+#define MOTION_COUNT 50
+#define MOTION_DELAY 100
+
+#define DEVIATION 1
 
 class Motor{
   public:
