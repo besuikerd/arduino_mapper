@@ -176,3 +176,7 @@ int Pathfinder::calculateTurningCost(int from, int to){
     int r = abs((to - from) % 4);
     return r==3 ? 1 : r;
 }
+
+int Pathfinder::calculateTurningDirection(int from, int to){
+	return (from - to + 4) % 4 == 3 ? LEFT : RIGHT;
+}
