@@ -29,4 +29,15 @@
 // Default cost to travel to each chunk. Should be high
 #define DEFAULT_COST 1000
 
+//motor configuration
+#define MAX_POWER 250
+
+#define ROTATE_DELAY 1410
+
+#define MOTION_COUNT 50
+#define MOTION_DELAY 100
+
+#define DEVIATION 1
+
+
 #endif

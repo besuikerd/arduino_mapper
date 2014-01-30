@@ -41,9 +41,13 @@ void setup(){
 }
 
 void setupPins(){
-    pinMode(LED_FINISHED, OUTPUT);
-    pinMode(BUMP_L, INPUT);
-    pinMode(BUMP_R, INPUT);
+	pinMode(LED_FINISHED, OUTPUT);
+	pinMode(BUMP_L, INPUT);
+	pinMode(BUMP_R, INPUT);
+	pinMode(DIR_L, OUTPUT);
+	pinMode(DIR_R, OUTPUT);
+	pinMode(PWM_L, OUTPUT);
+	pinMode(PWM_R, OUTPUT);
 }
 
 void loop(){
@@ -93,14 +97,13 @@ void loop(){
                 currentHeading = direction;
                 
                 // Now drive forward towards the next chunk
-                int count = 30; //amount of increments to check for collisions
-                int d = 20; //delay per check
+                int count = MOTION_COUNT; //amount of increments to check for collisions
                 int total = 0; //total processed increments
                 
                 motor.forward();
                 
                 while(!(collision = bumper.checkCollision()) && count > 0){
-                    delay(d);
+                    delay(MOTION_DELAY);
                     count--;
                 }
                 
@@ -128,7 +131,7 @@ void loop(){
                     }
                     // Go back to the previous chunk
                     motor.back();
-                    delay((30-count) * d); //return to previous position
+                    delay((30-count) * MOTION_DELAY); //return to previous position
                     motor.stop();
                     return; //do loop again, stop following the path
                 }
@@ -168,11 +171,6 @@ void loop(){
             finish();
         }
     }
-}
-
-void move(boolean forward){
-    
-
 }
 
 void finish(){
