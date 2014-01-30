@@ -1,4 +1,5 @@
 #include "motor.h"
+#include "config.h"
 
 Motor::Motor(int dir_l, int dir_r, int pwm_l, int pwm_r){
     this->dir_l = dir_l;
@@ -48,8 +49,8 @@ void Motor::both(int power){
     digitalWrite(this->dir_r, power<0 ? HIGH : LOW);
     power = abs(power);
     power = power>255 ? 255 : power;
-    analogWrite(this->pwm_l, power - DEVIATION);
-    analogWrite(this->pwm_r, power + DEVIATION);
+    analogWrite(this->pwm_l, power + DEVIATION);
+    analogWrite(this->pwm_r, power);
 }
 
 void Motor::forward(){

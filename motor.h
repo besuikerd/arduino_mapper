@@ -1,11 +1,5 @@
 #include <Arduino.h>
 
-#define MAX_POWER 180
-
-#define ROTATE_DELAY 500
-
-#define DEVIATION 5
-
 class Motor{
   public:
     Motor(int dir_l, int dir_r, int pwm_l, int pwm_r);
