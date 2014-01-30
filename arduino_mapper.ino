@@ -98,7 +98,6 @@ void loop(){
                 
                 // Now drive forward towards the next chunk
                 int count = MOTION_COUNT; //amount of increments to check for collisions
-                int total = 0; //total processed increments
                 
                 motor.forward();
                 
@@ -131,7 +130,7 @@ void loop(){
                     }
                     // Go back to the previous chunk
                     motor.back();
-                    delay((30-count) * MOTION_DELAY); //return to previous position
+                    delay((MOTION_COUNT-count) * MOTION_DELAY); //return to previous position
                     motor.stop();
                     return; //do loop again, stop following the path
                 }
