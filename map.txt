@@ -1,0 +1,6 @@
+Map in EEPROM:
+ooxxx
+xxoxx
+xxxxx
+xxxxx
+xxxxx

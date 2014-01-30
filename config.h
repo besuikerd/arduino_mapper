@@ -32,14 +32,14 @@
 #define DEFAULT_COST 1000
 
 //motor configuration
-#define MAX_POWER 250
+#define MAX_POWER 220
 
-#define ROTATE_DELAY 1410
+#define ROTATE_DELAY 1030
 
-#define MOTION_COUNT 50
+#define MOTION_COUNT 30
 #define MOTION_DELAY 100
 
-#define DEVIATION 1
+#define DEVIATION 0
 
 
 #endif
