@@ -8,5 +8,6 @@ class Test{
     void testMap();
     void testTurningCost();
     void testPathfinder();
+	void testRotation();
     void assertEquals(int is, int ex, String msg);
 };
