@@ -1,8 +1,8 @@
 #include <Arduino.h>
 #include "map.h"
+#include "config.h"
 
 #ifndef PATHFINDER_H
-#define PATHFINDER_DEBUG 1
 #define PATHFINDER_H
 enum Heading { NORTH=0, WEST=1, SOUTH=2, EAST=3 };
 enum Direction {LEFT = 0, RIGHT = 1};

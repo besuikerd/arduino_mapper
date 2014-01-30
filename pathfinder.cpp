@@ -1,7 +1,6 @@
 #include "pathfinder.h"
 #include "map.h"
-
-#define DEFAULT_COST 1000
+#include "config.h"
 
 Pathfinder::Pathfinder(Map* m){
     this->m = m;

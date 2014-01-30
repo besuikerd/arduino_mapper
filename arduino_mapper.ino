@@ -3,12 +3,9 @@
 #include "pathfinder.h"
 #include "test.h"
 #include "bumper.h"
-#include "pins.h"
+#include "config.h"
 #include <EEPROM.h>
 #include <IRremote.h>
-
-// If 1, test methods will run instead of normal methods
-#define TEST_MODE 0
 
 // Map object for storing the map
 Map theMap(MAP_SIZE);

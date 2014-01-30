@@ -1,9 +1,9 @@
 #include <Arduino.h>
 #include <EEPROM.h>
+#include "config.h"
 
 #ifndef MAP_H
 #define MAP_H
-#define MAP_SIZE 4
 struct Chunk{
 	/**
 	* wheter or not this Chunk has been processed
