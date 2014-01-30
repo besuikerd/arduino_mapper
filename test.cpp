@@ -1,4 +1,6 @@
 #include "test.h"
+#include "motor.h"
+#include "config.h"
 
 /** Run all tests */
 void Test::run(){
@@ -152,4 +154,16 @@ void Test::testPathfinder(){
     this->assertEquals(pa.directions[4], SOUTH, "directions[4]");
     this->assertEquals(pa.directions[5], SOUTH, "directions[5]");
 
+}
+
+void Test::testRotation(){
+	Motor m = Motor(DIR_L, DIR_R, PWM_L, PWM_R);
+	while(true){
+		if(random(2) == 1){
+			m.turnLeft();
+		} else{
+			m.turnRight();
+		}
+		delay(500);
+	}
 }

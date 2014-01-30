@@ -33,17 +33,17 @@
 
 // Motor configuration
 // Maximum power to use by the motors. Between 0 and 255
-#define MAX_POWER 250
+#define MAX_POWER 220
 
 // The time the motors should run when turning 90 degrees
-#define ROTATE_DELAY 1410
+#define ROTATE_DELAY 1030
 
 // Two values indicating how long the motors should run when moving forward to the next chunk
-#define MOTION_COUNT 50
+#define MOTION_COUNT 30
 #define MOTION_DELAY 100
 
 // Deviation value for the left motor
-#define DEVIATION 1
+#define DEVIATION 0
 
 
 #endif

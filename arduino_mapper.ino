@@ -43,9 +43,11 @@ void setup(){
     readFromEEPROM(&storedMap);
     Serial.println(storedMap.toString());
     
+	
+	
     // Block untill button is pressed
     while(!digitalRead(START)){ }
-    
+	
     Serial.println("Starting");
     
     digitalWrite(LED_FINISHED, HIGH);
