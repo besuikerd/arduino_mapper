@@ -2,7 +2,7 @@
 #include "motor.h"
 #include "pathfinder.h"
 #include "test.h"
-#include "Bumper.h"
+#include "bumper.h"
 #include "pins.h"
 #include <EEPROM.h>
 #include <IRremote.h>

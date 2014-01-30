@@ -1,4 +1,4 @@
-#include "Bumper.h"
+#include "bumper.h"
 #include <Arduino.h>
 
 Bumper::Bumper(int* pins){
