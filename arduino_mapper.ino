@@ -37,6 +37,18 @@ void setup(){
     //theMap.obstacle(1,3); theMap.processed(1,3);
     //readFromEEPROM(&theMap);
     setupPins();
+    
+    Serial.println("Map in EEPROM:");
+    Map storedMap(MAP_SIZE);
+    readFromEEPROM(&storedMap);
+    Serial.println(storedMap.toString());
+    
+    // Block untill button is pressed
+    while(!digitalRead(START)){ }
+    
+    Serial.println("Starting");
+    
+    digitalWrite(LED_FINISHED, HIGH);
   }
 }
 
@@ -44,6 +56,7 @@ void setupPins(){
 	pinMode(LED_FINISHED, OUTPUT);
 	pinMode(BUMP_L, INPUT);
 	pinMode(BUMP_R, INPUT);
+    pinMode(START, INPUT);
 	pinMode(DIR_L, OUTPUT);
 	pinMode(DIR_R, OUTPUT);
 	pinMode(PWM_L, OUTPUT);
@@ -51,9 +64,7 @@ void setupPins(){
 }
 
 void loop(){
-    if(!TEST_MODE){
-        
-        
+    if(!TEST_MODE){        
         pathfinder.run(currentX, currentY, currentHeading);
         path p = pathfinder.getPath();
         

@@ -9,6 +9,8 @@
 #define MAPPING_DEBUG 1
 
 // Pins
+#define START 3
+
 // Bumper pins
 #define BUMP_L 11
 #define BUMP_R 10
