@@ -39,7 +39,7 @@ void Pathfinder::run(int currentX, int currentY, int currentHeading){
                     n = this->getCostTo(x, y-1)+1+this->calculateTurningCost(this->getTargetHeading(x, y-1), SOUTH);
                     e = this->getCostTo(x+1, y)+1+this->calculateTurningCost(this->getTargetHeading(x+1, y), WEST);
                     w = this->getCostTo(x-1, y)+1+this->calculateTurningCost(this->getTargetHeading(x-1, y), EAST);
-                    s = this->getCostTo(x, y+1)+1+this->calculateTurningCost(this->getTargetHeading(x, y-1), NORTH);
+                    s = this->getCostTo(x, y+1)+1+this->calculateTurningCost(this->getTargetHeading(x, y+1), NORTH);
                     
                     // Determine shortest route
                     if(n<targetCosts[x][y].cost){

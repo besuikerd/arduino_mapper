@@ -33,118 +33,156 @@ void setup(){
     t.run();
   } else{
     theMap.processed(currentX, currentY);
+    //theMap.obstacle(1,2); theMap.processed(1,2);
+    //theMap.obstacle(1,3); theMap.processed(1,3);
     //readFromEEPROM(&theMap);
-	setupPins();
+    setupPins();
   }
 }
 
 void setupPins(){
-	pinMode(LED_FINISHED, OUTPUT);
-	pinMode(BUMP_L, INPUT);
-	pinMode(BUMP_R, INPUT);
+    pinMode(LED_FINISHED, OUTPUT);
+    pinMode(BUMP_L, INPUT);
+    pinMode(BUMP_R, INPUT);
 }
 
 void loop(){
-	if(!TEST_MODE){
-		
-		
-		pathfinder.run(currentX, currentY, currentHeading);
-		
-		if(pathfinder.isTargetReachable()){
-			path p = pathfinder.getPath();
-			boolean collision = false;
-			
-			for(int i = 0; i < p.length ; i++){ //walk over path
-			
-				int direction = p.directions[i];
-			
-				switch(direction){
-				
-				}
-				
-				
-				int dir = pathfinder.calculateTurningDirection(currentHeading, direction);
-				int cost = pathfinder.calculateTurningCost(currentHeading, direction);
-				currentHeading = (currentHeading + (dir == LEFT ? -1 : 1) * cost + 4) % 4;
-				for(int i = 0 ; i < cost ; i++){
-					switch(dir){
-						case LEFT:
-							motor.turnLeft();
-							break;
-						case RIGHT:
-							motor.turnRight();
-							break;
-					}
-				}
-				
-				int count = 30; //amount of increments to check for collisions
-				int d = 20; //delay per check
-				int total = 0; //total processed increments
-				
-				motor.forward();
-				
-				while(!(collision = bumper.checkCollision()) && count > 0){
-					
-					delay(d);
-					count--;
-					total++;
-				}
-				
-				motor.stop();
-				
-				if(collision){
-					theMap.obstacle(currentX, currentY);
-					theMap.processed(currentX, currentY);
-					motor.back();
-					delay(total * d); //return to previous position
-					motor.stop();
-					return; //do loop again
-				}
-				
-				theMap.processed(currentX, currentY);
-				
-				
-				switch(direction){
-					case NORTH:
-						currentY -= 1;
-						break;
-					case EAST:
-						currentX += 1;
-						break;
-					case SOUTH:
-						currentY += 1;
-						break;
-					case WEST:
-						currentX -= 1;
-						break;
-				}
-				
-				Serial.print("current: (");
-				Serial.print(currentX);
-				Serial.print(", ");
-				Serial.print(currentY);
-				Serial.println(")");
-			}
-		} else{
-			Serial.println("done!");
-			finish();
-		}
-	}
+    if(!TEST_MODE){
+        
+        
+        pathfinder.run(currentX, currentY, currentHeading);
+        path p = pathfinder.getPath();
+        
+        if(pathfinder.isTargetReachable() && p.length>0){
+            boolean collision = false;
+            
+            if(MAPPING_DEBUG){
+                Serial.print("===== Path found from (");
+                Serial.print(currentX); Serial.print(","); Serial.print(currentY);
+                Serial.print(") to (");
+                Serial.print(pathfinder.getTargetX()); Serial.print(","); Serial.print(pathfinder.getTargetY());
+                Serial.println(")");
+                Serial.print("===== Length: ");
+                Serial.println(p.length);
+                Serial.print("===== Directions: ");
+                for(int j=0; j<p.length; j++){
+                    Serial.print(p.directions[j]);
+                }
+                Serial.println();
+            }
+            
+            for(int i = 0; i < p.length ; i++){ //walk over path
+                // Next direction in the path
+                int direction = p.directions[i];
+                if(MAPPING_DEBUG){ Serial.print("Moving "); Serial.println(direction); }
+                
+                // First turn to the correct position
+                int dir = pathfinder.calculateTurningDirection(currentHeading, direction);
+                int cost = pathfinder.calculateTurningCost(currentHeading, direction);
+                //currentHeading = (currentHeading + (dir == LEFT ? -1 : 1) * cost + 4) % 4;
+                for(int i = 0 ; i < cost ; i++){
+                    switch(dir){
+                        case LEFT:
+                            motor.turnLeft();
+                            break;
+                        case RIGHT:
+                            motor.turnRight();
+                            break;
+                    }
+                }
+                currentHeading = direction;
+                
+                // Now drive forward towards the next chunk
+                int count = 30; //amount of increments to check for collisions
+                int d = 20; //delay per check
+                int total = 0; //total processed increments
+                
+                motor.forward();
+                
+                while(!(collision = bumper.checkCollision()) && count > 0){
+                    delay(d);
+                    count--;
+                }
+                
+                motor.stop();
+                
+                if(collision){
+                    if(MAPPING_DEBUG){ Serial.println("!!!!! Collision !!!!!!"); }
+                    switch(direction){
+                        case NORTH:
+                            theMap.obstacle(currentX, currentY-1);
+                            theMap.processed(currentX, currentY-1);
+                            break;
+                        case EAST:
+                            theMap.obstacle(currentX+1, currentY);
+                            theMap.processed(currentX+1, currentY);
+                            break;
+                        case SOUTH:
+                            theMap.obstacle(currentX, currentY+1);
+                            theMap.processed(currentX, currentY+1);
+                            break;
+                        case WEST:
+                            theMap.obstacle(currentX-1, currentY);
+                            theMap.processed(currentX-1, currentY);
+                            break;
+                    }
+                    // Go back to the previous chunk
+                    motor.back();
+                    delay((30-count) * d); //return to previous position
+                    motor.stop();
+                    return; //do loop again, stop following the path
+                }
+                
+                // We have arrived at a new chunk successfully. Update the current location
+                switch(direction){
+                    case NORTH:
+                        currentY -= 1;
+                        break;
+                    case EAST:
+                        currentX += 1;
+                        break;
+                    case SOUTH:
+                        currentY += 1;
+                        break;
+                    case WEST:
+                        currentX -= 1;
+                        break;
+                }
+                if(MAPPING_DEBUG){
+                    Serial.print("Successfully arrived at chunk (");
+                    Serial.print(currentX); Serial.print(","); Serial.print(currentY);
+                    Serial.println(")");
+                }
+                
+                // And set this location as processed
+                theMap.processed(currentX, currentY);
+                
+                if(MAPPING_DEBUG){
+                    Serial.println("Map:");
+                    Serial.println(theMap.toString());
+                }
+            }
+            if(MAPPING_DEBUG) Serial.println("===== Path completed ====="); 
+        } else{
+            if(MAPPING_DEBUG) Serial.println("done!");
+            finish();
+        }
+    }
 }
 
 void move(boolean forward){
-	
+    
 
 }
 
 void finish(){
-	writeToEEPROM(theMap);
+    writeToEEPROM(theMap);
 
-	//freeze
-	while(true){
-		digitalWrite(LED_FINISHED, HIGH);
-		delay(1000);
-		digitalWrite(LED_FINISHED, LOW);
-		delay(1000);			
-	}
+    //freeze
+    while(true){
+        digitalWrite(LED_FINISHED, HIGH);
+        delay(1000);
+        digitalWrite(LED_FINISHED, LOW);
+        delay(1000);            
+    }
 }

@@ -4,7 +4,9 @@
 // If 1, test methods will run instead of normal methods
 #define TEST_MODE 0
 // If 1, the pathfinder will print additional debug messages
-#define PATHFINDER_DEBUG 1
+#define PATHFINDER_DEBUG 0
+
+#define MAPPING_DEBUG 1
 
 // Pins
 // Bumper pins
@@ -23,7 +25,7 @@
 #define LED_FINISHED 9
 
 // Map size
-#define MAP_SIZE 4
+#define MAP_SIZE 5
 // Default cost to travel to each chunk. Should be high
 #define DEFAULT_COST 1000
 
